@@ -16,4 +16,4 @@ const newRoom = new Schema({
   },
 });
 
-export default model("Product", newRoom);
+export default model("Rooms", newRoom);
