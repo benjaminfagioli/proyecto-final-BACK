@@ -1,11 +1,11 @@
-import Rooms from "../models/room.model";
+import Rooms from "../models/room.model.js";
 
 export const getAllRooms = async (req, res) => {
   try {
     const rooms = await Rooms.find();
     res.status(200).json(rooms);
   } catch (error) {
-    return res.status(500).json({ messagee: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
