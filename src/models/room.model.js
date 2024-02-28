@@ -1,16 +1,17 @@
 import { Schema, model } from "mongoose";
-
+import regexImage from "../helpers/regexImage.js";
 const newRoom = new Schema({
   number: Number,
 
-  environments: Number,
-
-  isBusy: {
-    type: Boolean,
-    default: false,
+  stars: {
+    type: Number,
+    min: 1,
+    max: 3,
   },
 
-  hasPool: {
+  description: String,
+
+  isBusy: {
     type: Boolean,
     default: false,
   },
@@ -23,6 +24,8 @@ const newRoom = new Schema({
     type: Boolean,
     default: true,
   },
+
+  images: Array,
 });
 
 export default model("Rooms", newRoom);

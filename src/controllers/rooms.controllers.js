@@ -9,15 +9,6 @@ export const getAllRooms = async (req, res) => {
   }
 };
 
-export const getRooms = async (req, res) => {
-  try {
-    const rooms = await Rooms.find();
-    res.status(200).json(rooms);
-  } catch (error) {
-    return res.status(500).json({ messagee: error.message });
-  }
-};
-
 export const getById = async (req, res) => {
   const { id } = req.params;
   try {
@@ -51,20 +42,20 @@ export const deleteById = async (req, res) => {
 };
 
 export const createRoom = async (req, res) => {
-  const { number, environment, isBusy, hasPool, userId, isVisible } = req.body;
+  const { number, stars, isBusy, description, userId, isVisible, images } =
+    req.body;
 
   try {
-    const newRoom = await Rooms.createRoom(
-      number,
-      environment,
-      isBusy,
-      hasPool,
-      userId,
-      isVisible
-    );
-    res
-      .status(201)
-      .json({ message: `Habitacion creada con el numero: ${newRoom.number}` });
+    const newRoom = await Rooms.create({
+      number: number,
+      stars: stars,
+      isBusy: isBusy,
+      description: description,
+      userId: userId,
+      isVisible: isVisible,
+      images: images,
+    });
+    res.status(201).json({ message: newRoom._id });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
