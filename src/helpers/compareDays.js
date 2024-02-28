@@ -1,3 +1,10 @@
-if (new Date(1992, 3, 2).getTime() > new Date(1900, 1, 3).getTime()) {
-  console.log("hola");
-}
+const compareDays = (fecha1, fecha2) => {
+  if (fecha1.getTime() > fecha2.getTime()) {
+    return 1;
+  }
+  if (fecha1.getTime() > fecha2.getTime()) {
+    return -1;
+  }
+};
+
+export default compareDays;

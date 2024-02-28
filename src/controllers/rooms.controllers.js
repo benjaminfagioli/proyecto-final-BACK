@@ -12,13 +12,13 @@ export const getAllRooms = async (req, res) => {
 export const getById = async (req, res) => {
   const { id } = req.params;
   try {
-    const rooms = await Rooms.find(id);
+    const rooms = await Rooms.findById(id);
 
     if (rooms) {
       return res.status(200).json(rooms);
     }
 
-    return res.status(404).json({ message: "habitacion no encontrado" });
+    return res.status(404).json({ message: "Habitacion no encontrada" });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -83,4 +83,28 @@ export const editRoom = async (req, res) => {
   }
 };
 
-export const searchRooms = async (req, res) => {};
+export const searchRooms = async (req, res) => {
+  const { stars } = req.query;
+  try {
+    const results = await Rooms.find({ stars: stars });
+    if (!results.length)
+      return res
+        .status(404)
+        .json({ message: "No se encontraron habitaciones" });
+    res.status(200).json(results);
+  } catch (error) {
+    res.status(500).json(error.message);
+  }
+};
+
+export const getByNumber = async (req, res) => {
+  const { number } = req.params;
+  try {
+    const result = await Rooms.findOne({ number: number });
+    if (!result)
+      return res.status(404).json({ message: "No se encontró la habitación" });
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json(error.message);
+  }
+};
