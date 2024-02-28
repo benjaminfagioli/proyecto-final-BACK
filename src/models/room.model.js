@@ -1,5 +1,4 @@
 import { Schema, model } from "mongoose";
-import regexImage from "../helpers/regexImage.js";
 const newRoom = new Schema({
   number: Number,
 
