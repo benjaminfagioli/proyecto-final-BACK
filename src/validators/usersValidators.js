@@ -12,6 +12,7 @@ const existsEmail = async (email) => {
 };
 
 const validateCreateUser = {
+  name: body("name").isEmpty().withMessage("Ingrersa un nombre"),
   email: body("email")
     .isEmail()
     .withMessage("Ingrersa un mail valido")
