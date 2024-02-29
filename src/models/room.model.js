@@ -1,4 +1,5 @@
 import { Schema, model } from "mongoose";
+
 const newRoom = new Schema({
   number: Number,
 
