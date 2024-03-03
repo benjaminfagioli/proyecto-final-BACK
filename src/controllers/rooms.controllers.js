@@ -86,11 +86,11 @@ export const editRoom = async (req, res) => {
 
 export const searchRooms = async (req, res) => {
   const { stars, bedrooms, bathrooms, floor, wifi, airConditioner } = req.query;
-  const payload = { isVisible: true };
+  const payload = {};
   let properties = [];
-  let assign = {};
+  let assign = { isVisible: true };
   if (stars) {
-    // payload.stars = stars;
+    assign.stars = stars;
   }
   if (bedrooms || bathrooms || floor || wifi || airConditioner) {
     payload.properties = {};
@@ -108,7 +108,7 @@ export const searchRooms = async (req, res) => {
     payload.properties.wifi = wifi;
   }
   if (airConditioner) {
-    payload.properties.airConditioner = airConditioner;
+    payload.properties.airConditional = airConditioner;
   }
   try {
     for (const key in payload.properties) {
@@ -123,11 +123,12 @@ export const searchRooms = async (req, res) => {
     delete payload.properties;
     properties.forEach((p) => Object.assign(assign, p));
     console.log(assign);
+
     const results = await Rooms.find(assign);
-    // if (!results.length)
-    //   return res
-    //     .status(404)
-    //     .json({ message: "No se encontraron habitaciones" });
+    if (!results.length)
+      return res
+        .status(404)
+        .json({ message: "No se encontraron habitaciones" });
     res.status(200).json(results);
   } catch (error) {
     res.status(500).json(error.message);
