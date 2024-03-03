@@ -1,4 +1,5 @@
 import Rooms from "../models/room.model.js";
+import cadenaABooleano from "../utils/cadenaABooleano.js";
 
 export const getAllRooms = async (req, res) => {
   try {
@@ -84,9 +85,46 @@ export const editRoom = async (req, res) => {
 };
 
 export const searchRooms = async (req, res) => {
-  const { stars } = req.query;
+  const { stars, bedrooms, bathrooms, floor, wifi, airConditioner } = req.query;
+  const payload = {};
+  let properties = [];
+  let assign = { isVisible: true };
+  if (stars) {
+    assign.stars = stars;
+  }
+  if (bedrooms || bathrooms || floor || wifi || airConditioner) {
+    payload.properties = {};
+  }
+  if (bathrooms) {
+    payload.properties.bathrooms = bathrooms;
+  }
+  if (bedrooms) {
+    payload.properties.bedrooms = bedrooms;
+  }
+  if (floor) {
+    payload.properties.floor = floor;
+  }
+  if (wifi) {
+    payload.properties.wifi = wifi;
+  }
+  if (airConditioner) {
+    payload.properties.airConditional = airConditioner;
+  }
   try {
-    const results = await Rooms.find({ stars: stars });
+    for (const key in payload.properties) {
+      const element = payload.properties[key];
+      let queryString = `properties.${[key]}`;
+      properties.push({
+        [queryString]: isNaN(element)
+          ? cadenaABooleano(element)
+          : parseInt(element),
+      });
+    }
+    delete payload.properties;
+    properties.forEach((p) => Object.assign(assign, p));
+    console.log(assign);
+
+    const results = await Rooms.find(assign);
     if (!results.length)
       return res
         .status(404)
