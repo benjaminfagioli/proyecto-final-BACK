@@ -9,10 +9,11 @@ import {
 } from "../controllers/user.controllers.js";
 import validateCreateUser from "../validators/usersValidators.js";
 import { validateFields } from "../validators/validateFields.js";
+import { validateToken } from "../validators/validateToken.js";
 
 const router = Router();
 
-router.get("/allUsers", getAllUsers);
+router.get("/allUsers", validateToken, getAllUsers);
 router.post(
   "/createUser",
   [
@@ -23,7 +24,7 @@ router.post(
   validateFields,
   createUser
 );
-router.delete("/deleteUser/:id", deleteUserById);
+router.delete("/deleteUser/:id", validateToken, deleteUserById);
 router.patch("/editUser/:id", editUser);
 router.get("/searchUsers", searchUsers);
 router.post("/login", validateFields, login);
