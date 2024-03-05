@@ -26,6 +26,6 @@ router.post(
 router.delete("/deleteUser/:id", deleteUserById);
 router.patch("/editUser/:id", editUser);
 router.get("/searchUsers", searchUsers);
-router.post("/login", login);
+router.post("/login", validateFields, login);
 
 export default router;

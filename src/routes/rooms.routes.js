@@ -8,13 +8,14 @@ import {
   getByNumber,
   searchRooms,
 } from "../controllers/rooms.controllers.js";
+import { validateToken } from "../validators/validateToken.js";
 
 const router = Router();
 
-router.get("/allRooms", getAllRooms);
-router.post("/createRoom", createRoom);
-router.delete("/deleteRoom/:id", deleteById);
-router.patch("/editRoom/:id", editRoom);
+router.get("/allRooms", validateToken, getAllRooms);
+router.post("/createRoom", validateToken, createRoom);
+router.delete("/deleteRoom/:id", validateToken, deleteById);
+router.patch("/editRoom/:id", validateToken, editRoom);
 router.get("/search", searchRooms);
 router.get("/getById/:id", getById);
 router.get("/getByNumber/:number", getByNumber);
