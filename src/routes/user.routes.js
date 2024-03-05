@@ -5,6 +5,7 @@ import {
   deleteUserById,
   editUser,
   searchUsers,
+  login,
 } from "../controllers/user.controllers.js";
 import validateCreateUser from "../validators/usersValidators.js";
 import { validateFields } from "../validators/validateFields.js";
@@ -25,5 +26,6 @@ router.post(
 router.delete("/deleteUser/:id", deleteUserById);
 router.patch("/editUser/:id", editUser);
 router.get("/searchUsers", searchUsers);
+router.post("/login", login);
 
 export default router;
