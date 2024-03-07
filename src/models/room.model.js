@@ -24,10 +24,6 @@ const newRoom = new Schema(
       default: false,
     },
 
-    userId: {
-      type: Schema.Types.ObjectId,
-    },
-
     isVisible: {
       type: Boolean,
       default: true,
