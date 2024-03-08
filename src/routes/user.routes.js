@@ -7,7 +7,10 @@ import {
   searchUsers,
   login,
 } from "../controllers/user.controllers.js";
-import validateCreateUser from "../validators/usersValidators.js";
+import {
+  validateCreateUser,
+  validateLoginUser,
+} from "../validators/usersValidators.js";
 import { validateFields } from "../validators/validateFields.js";
 import { validateToken } from "../validators/validateToken.js";
 
@@ -27,6 +30,13 @@ router.post(
 router.delete("/deleteUser/:id", validateToken, deleteUserById);
 router.patch("/editUser/:id", editUser);
 router.get("/searchUsers", searchUsers);
-router.post("/login", validateFields, login);
+router.post(
+  "/login",
+  [validateLoginUser.email],
+  [validateLoginUser.password],
+  [validateLoginUser.body],
+  validateFields,
+  login
+);
 
 export default router;
