@@ -9,11 +9,26 @@ import {
   searchRooms,
 } from "../controllers/rooms.controllers.js";
 import { validateToken } from "../validators/validateToken.js";
+import validateCreateProducts from "../validators/productsValidations.js";
+import { validateFields } from "../validators/validateFields.js";
 
 const router = Router();
 
+router.post(
+  "/createRoom",
+  validateToken,
+  [validateCreateProducts.stars],
+  [validateCreateProducts.number],
+  [validateCreateProducts.properties],
+  [validateCreateProducts.hasOwner],
+  [validateCreateProducts.isBusy],
+  [validateCreateProducts.description],
+  [validateCreateProducts.isVisible],
+  [validateCreateProducts.images],
+  validateFields,
+  createRoom
+);
 router.get("/allRooms", validateToken, getAllRooms);
-router.post("/createRoom", validateToken, createRoom);
 router.delete("/deleteRoom/:id", validateToken, deleteById);
 router.patch("/editRoom/:id", validateToken, editRoom);
 router.get("/search", searchRooms);

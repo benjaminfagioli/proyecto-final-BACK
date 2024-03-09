@@ -14,13 +14,14 @@ const newRoom = new Schema(
 
     properties: Object,
 
-    isBusy: {
-      type: Boolean,
-      default: false,
+    hasOwner: {
+      type: Object,
+      default: { 0: false },
     },
 
-    userId: {
-      type: Schema.Types.ObjectId,
+    isBusy: {
+      type: Object,
+      default: false,
     },
 
     isVisible: {

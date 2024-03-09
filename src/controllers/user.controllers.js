@@ -85,10 +85,9 @@ export const searchUsers = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  const { email, name, role } = req.body;
-  const { userToken } = req;
-  console.log(userToken);
-  const user = await User.findOne({ email: email, name: name, role: role });
+  const { email } = req.body;
+
+  const user = await User.findOne({ email: email });
   if (!user) {
     return res.status(401).json({ message: "Usuario no encontrado" });
   }
