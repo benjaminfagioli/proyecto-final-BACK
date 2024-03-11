@@ -25,7 +25,6 @@ router.post(
     validateCreateUser.name,
   ],
   validateFields,
-  validateToken,
   createUser
 );
 router.delete("/deleteUser/:id", validateToken, deleteUserById);
