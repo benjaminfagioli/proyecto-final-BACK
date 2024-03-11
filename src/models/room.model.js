@@ -14,14 +14,9 @@ const newRoom = new Schema(
 
     properties: Object,
 
-    hasOwner: {
-      type: Object,
-      default: { 0: false },
-    },
-
-    isBusy: {
-      type: Object,
-      default: false,
+    reserves: {
+      type: Array,
+      default: [],
     },
 
     isVisible: {
