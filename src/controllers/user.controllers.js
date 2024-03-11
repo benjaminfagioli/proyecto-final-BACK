@@ -1,5 +1,6 @@
 import { signToken } from "../helpers/singToken.js";
 import User from "../models/user.model.js";
+import { validateToken } from "../validators/validateToken.js";
 
 export const getAllUsers = async (req, res) => {
   try {
@@ -85,10 +86,24 @@ export const searchUsers = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  const { email } = req.body;
+  try {
+    const { email } = req.body;
 
-  const user = await User.findOne({ email: email });
+    const user = await User.findOne({ email: email });
 
-  const token = signToken(user);
-  return res.status(200).json({ token: token });
+    const token = signToken(user);
+
+    return res.status(200).json({ token: token });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const getProfileWithToken = async (req, res) => {
+  try {
+    const { userToken } = req;
+    res.status(200).json(userToken);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };

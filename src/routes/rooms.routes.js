@@ -2,7 +2,9 @@ import { Router } from "express";
 import {
   createRoom,
   deleteById,
+  deleteReserve,
   editRoom,
+  getAllMyRooms,
   getAllRooms,
   getById,
   getByNumber,
@@ -56,5 +58,7 @@ router.post(
   validateFields,
   reserve
 );
+router.get("/getallMyRooms", validateUserToken, getAllMyRooms);
+router.patch("/deleteReserve", deleteReserve);
 
 export default router;
