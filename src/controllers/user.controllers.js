@@ -88,9 +88,7 @@ export const login = async (req, res) => {
   const { email } = req.body;
 
   const user = await User.findOne({ email: email });
-  if (!user) {
-    return res.status(401).json({ message: "Usuario no encontrado" });
-  }
+
   const token = signToken(user);
   return res.status(200).json({ token: token });
 };

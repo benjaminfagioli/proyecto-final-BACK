@@ -5,21 +5,14 @@ import comparePasswords from "../helpers/comparePasswords.js";
 
 const existsEmail = async (email) => {
   const userFound = await User.findOne({ email: email });
-
-  if (userFound) {
+  if (userFound)
     throw new Error(`El email ${email} ya se encuentra registrado`);
-  }
-
   return false;
 };
 
 const existsEmailLogin = async (email) => {
   const userFound = await User.findOne({ email: email });
-
-  if (!userFound) {
-    throw new Error(`No existe un usuario con el email ${email}`);
-  }
-
+  if (!userFound) throw new Error(`No existe un usuario con el email ${email}`);
   return false;
 };
 
@@ -60,11 +53,7 @@ export const validateLoginUser = {
   password: body("password")
     .notEmpty()
     .withMessage("Debe ingresar una contraseña")
-    .if(body("password").notEmpty())
-    .matches(passwordRegex)
-    .withMessage(
-      "Ingresa una contraseña con mínimo de 8 caracteres, máximo de 30. Debe contener al menos una letra y un número, no se permiten espacios ni caracteres especiales."
-    ),
+    .if(body("password").notEmpty()),
   body: body()
     .if(body("email").notEmpty().isEmail())
     .if(body("password").notEmpty())

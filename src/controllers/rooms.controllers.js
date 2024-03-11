@@ -146,3 +146,22 @@ export const getByNumber = async (req, res) => {
     res.status(500).json(error.message);
   }
 };
+
+export const reserve = async (req, res) => {
+  const { userToken } = req;
+  const { from, to, room } = req.body;
+  try {
+    const payload = {
+      userId: userToken.id,
+      from: from,
+      to: to,
+    };
+    await Rooms.findOneAndUpdate(
+      { number: room },
+      { $push: { reserves: payload } }
+    );
+    res.status(200).json("Reservado correctamente");
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
