@@ -16,7 +16,7 @@ import { validateToken } from "../validators/validateToken.js";
 
 const router = Router();
 
-router.get("/allUsers", validateToken, getAllUsers);
+router.get("/allUsers", getAllUsers);
 router.post(
   "/createUser",
   [
@@ -25,6 +25,7 @@ router.post(
     validateCreateUser.name,
   ],
   validateFields,
+  validateToken,
   createUser
 );
 router.delete("/deleteUser/:id", validateToken, deleteUserById);
