@@ -94,6 +94,7 @@ const validateImages = (images) => {
   if (images.length == 0) throw new Error("Debe ingresar al menos una imagen");
   let incompatibles = [];
   images.forEach((i) => {
+    console.log("Validating image:", i);
     if (!regexImage.test(i)) incompatibles.push(i);
   });
   if (incompatibles.length > 0)
