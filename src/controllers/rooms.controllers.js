@@ -165,3 +165,43 @@ export const reserve = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const getAllMyRooms = async (req, res) => {
+  try {
+    const { userToken } = req;
+
+    const roomsFounded = await Rooms.find({
+      "reserves.userId": userToken.id,
+    });
+
+    if (!roomsFounded.length)
+      return res
+        .status(404)
+        .json({ message: "No tienes habitaciones reservadas" });
+
+    res.status(200).json(roomsFounded);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const deleteReserve = async (req, res) => {
+  const { from, to, userId, room } = req.body;
+  const payload = {
+    from: from,
+    to: to,
+    userId: userId,
+  };
+  try {
+    const roomFound = await Rooms.findOneAndUpdate(
+      {
+        number: room,
+      },
+      { $pull: { reserves: payload } }
+    );
+    // if (!roomFound) return res.status(404).json("No se encontró la habitacion");
+    res.status(200).json(roomFound);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

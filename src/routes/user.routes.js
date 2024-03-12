@@ -6,6 +6,7 @@ import {
   editUser,
   searchUsers,
   login,
+  getProfileWithToken,
 } from "../controllers/user.controllers.js";
 import {
   validateCreateUser,
@@ -13,6 +14,7 @@ import {
 } from "../validators/usersValidators.js";
 import { validateFields } from "../validators/validateFields.js";
 import { validateToken } from "../validators/validateToken.js";
+import { validateUserToken } from "../validators/validateUserToken.js";
 
 const router = Router();
 
@@ -38,5 +40,6 @@ router.post(
   validateFields,
   login
 );
+router.get("/profile", validateUserToken, getProfileWithToken);
 
 export default router;
