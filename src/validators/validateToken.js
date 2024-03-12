@@ -19,6 +19,7 @@ export const validateToken = (req, res, next) => {
     }
     next();
   } catch (error) {
+    console.error("Token Error:", error);
     return res.status(400).json({ error: "Token inválido." });
   }
 };

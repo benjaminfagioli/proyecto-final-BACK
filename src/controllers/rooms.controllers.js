@@ -44,8 +44,16 @@ export const deleteById = async (req, res) => {
 };
 
 export const createRoom = async (req, res) => {
-  const { number, stars, isBusy, description, userId, isVisible, images } =
-    req.body;
+  const {
+    number,
+    stars,
+    isBusy,
+    description,
+    userId,
+    isVisible,
+    images,
+    properties,
+  } = req.body;
 
   try {
     const newRoom = await Rooms.create({
@@ -56,13 +64,14 @@ export const createRoom = async (req, res) => {
       userId: userId,
       isVisible: isVisible,
       images: images,
+      properties: properties,
     });
     res.status(201).json({ message: newRoom._id });
   } catch (error) {
+    console.error("Room Creation Error:", error);
     return res.status(500).json({ message: error.message });
   }
 };
-
 export const editRoom = async (req, res) => {
   const { id } = req.params;
   const body = req.body;
