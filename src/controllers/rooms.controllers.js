@@ -94,10 +94,25 @@ export const editRoom = async (req, res) => {
 };
 
 export const searchRooms = async (req, res) => {
-  const { stars, bedrooms, bathrooms, floor, wifi, airConditioner } = req.query;
+  const {
+    stars,
+    bedrooms,
+    bathrooms,
+    floor,
+    wifi,
+    airConditioner,
+    lowerPrice,
+    highestPrice,
+  } = req.query;
   const payload = {};
   let properties = [];
   let assign = { isVisible: true };
+  if (lowerPrice) {
+    assign.price = { $gte: Number(lowerPrice) };
+  }
+  if (highestPrice) {
+    assign.price = { ...assign.price, $lte: Number(highestPrice) };
+  }
   if (stars) {
     assign.stars = stars;
   }
