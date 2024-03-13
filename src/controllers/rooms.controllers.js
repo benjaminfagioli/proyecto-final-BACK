@@ -220,3 +220,64 @@ export const deleteReserve = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const getDataToSearcher = async (req, res) => {
+  try {
+    const productHighestPrice = await Rooms.findOne(
+      { isVisible: true },
+      { price: true }
+    ).sort({
+      price: -1,
+    });
+
+    const productLowerPrice = await Rooms.findOne(
+      { isVisible: true },
+      { price: true }
+    ).sort({
+      price: 1,
+    });
+
+    const productsStars = await Rooms.find(
+      { isVisible: true },
+      { stars: true }
+    ).sort({
+      stars: -1,
+    });
+
+    const productsBedrooms = await Rooms.find(
+      { isVisible: true },
+      { "properties.bedrooms": true }
+    ).sort({ "properties.bedrooms": -1 });
+
+    const productsBathrooms = await Rooms.find(
+      { isVisible: true },
+      { "properties.bathrooms": true }
+    ).sort({ "properties.bathrooms": -1 });
+
+    const productsFloor = await Rooms.find(
+      { isVisible: true },
+      { "properties.floor": true }
+    );
+
+    const payload = {
+      price: {
+        highest: productHighestPrice,
+        lower: productLowerPrice,
+      },
+      stars: Array.from(new Set(productsStars.map((p) => p.stars))),
+      bedrooms: Array.from(
+        new Set(productsBedrooms.map((p) => p.properties?.bedrooms))
+      ),
+      bathrooms: Array.from(
+        new Set(productsBathrooms.map((p) => p.properties?.bathrooms))
+      ),
+      floors: Array.from(
+        new Set(productsFloor.map((p) => p.properties?.floor))
+      ),
+    };
+
+    res.status(200).json(payload);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
