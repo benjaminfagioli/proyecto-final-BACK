@@ -2,15 +2,23 @@ import { Router } from "express";
 import {
   createRoom,
   deleteById,
+  deleteReserve,
   editRoom,
+  getAllMyRooms,
   getAllRooms,
+  getDataToSearcher,
   getById,
   getByNumber,
+  reserve,
   searchRooms,
 } from "../controllers/rooms.controllers.js";
 import { validateToken } from "../validators/validateToken.js";
-import validateCreateProducts from "../validators/productsValidations.js";
+import {
+  validateCreateProducts,
+  validateReservesProducts,
+} from "../validators/productsValidations.js";
 import { validateFields } from "../validators/validateFields.js";
+import { validateUserToken } from "../validators/validateUserToken.js";
 
 const router = Router();
 
@@ -20,8 +28,7 @@ router.post(
   [validateCreateProducts.stars],
   [validateCreateProducts.number],
   [validateCreateProducts.properties],
-  [validateCreateProducts.hasOwner],
-  [validateCreateProducts.isBusy],
+  [validateCreateProducts.reserves],
   [validateCreateProducts.description],
   [validateCreateProducts.isVisible],
   [validateCreateProducts.images],
@@ -30,13 +37,30 @@ router.post(
 );
 router.get("/allRooms", validateToken, getAllRooms);
 router.delete("/deleteRoom/:id", validateToken, deleteById);
-router.patch("/editRoom/:id", validateToken, editRoom);
+router.patch(
+  "/editRoom/:id",
+  validateToken,
+  [validateCreateProducts.reserves],
+  validateFields,
+  editRoom
+);
 router.get("/search", searchRooms);
 router.get("/getById/:id", getById);
 router.get("/getByNumber/:number", getByNumber);
+router.post(
+  "/reserve",
+  validateUserToken,
+  [
+    validateReservesProducts.from,
+    validateReservesProducts.to,
+    validateReservesProducts.room,
+    validateReservesProducts.fromTo,
+  ],
+  validateFields,
+  reserve
+);
+router.get("/getallMyRooms", validateUserToken, getAllMyRooms);
+router.patch("/deleteReserve", deleteReserve);
+router.get("/getDataToSearcher", getDataToSearcher);
 
-// search with options
-// search with properties
 export default router;
-
-// agregar precio entre 60 y 120

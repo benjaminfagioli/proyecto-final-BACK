@@ -2,6 +2,12 @@ import { body } from "express-validator";
 import Room from "../models/room.model.js";
 import User from "../models/user.model.js";
 import regexImage from "../helpers/regexImage.js";
+import { isValidObjectId } from "mongoose";
+import {
+  addDays,
+  differenceInCalendarDays,
+  areIntervalsOverlapping,
+} from "date-fns";
 
 const validateProperties = (properties) => {
   const { bedrooms, bathrooms, m2, wifi, airConditional } = properties;
@@ -35,15 +41,41 @@ const validateEmailOwner = async (hasOwner) => {
     throw new Error("No se pudo encontrar un usuario con el ID solicitado");
 };
 
-const validateDates = (isbusy) => {
-  if (isbusy === false) return true;
-  const { from, to } = isbusy;
-  if (from == undefined || to == undefined)
+const validateReserves = async (reserves) => {
+  reserves.forEach(({ userId, from, to }) => {
+    if (!isValidObjectId(userId)) {
+      throw new Error(
+        "Las reservas deben contener un ObjectId asociado a la misma"
+      );
+    }
+    if (from == undefined) {
+      throw new Error("Las reservas deben tener una fecha de inicio");
+    } else {
+      if (!Boolean(Date.parse(from)))
+        throw new Error("From debe ser una fecha");
+    }
+    if (to == undefined) {
+      throw new Error("Las reservas deben tener una fecha límite");
+    } else {
+      if (!Boolean(Date.parse(to))) throw new Error("To debe ser una fecha");
+    }
+  });
+
+  return true;
+};
+
+const validateIds = async (reserves) => {
+  const ids = reserves.map((r) => r.userId);
+  const usersFound = await User.find({
+    _id: ids,
+  });
+  // 65ebc5aa61eb8126f5717f79
+  // 65e61bdfac2944ca4c8a8cdb
+  console.log(usersFound);
+  if (usersFound.length < ids.length)
     throw new Error(
-      "Se debe ingresar una fecha de inicio y una limite en forma de objeto"
+      "El id de uno o mas usuarios no se encuentran registrados en nuestra base de datos  "
     );
-  if (!Boolean(Date.parse(from)) || !Boolean(Date.parse(to)))
-    throw new Error("From y To deben tener formato de fecha");
   return true;
 };
 
@@ -51,6 +83,11 @@ const existsNumberRoom = async (number) => {
   const roomFound = await Room.findOne({ number: number });
   if (roomFound)
     throw new Error(`Ya existe una habitacion con el número ${number}`);
+};
+
+const existsNumberRoomReserve = async (number) => {
+  const roomFound = await Room.findOne({ number: number });
+  if (!roomFound) throw new Error(`No se encontró la habitacion n°${number}`);
 };
 
 const validateImages = (images) => {
@@ -66,7 +103,35 @@ const validateImages = (images) => {
   return true;
 };
 
-const validateCreateProducts = {
+const validateDate = (date) => {
+  return !!Date.parse(date);
+};
+
+const verifyReserves = async (body) => {
+  const { from, to, room } = body;
+  let interval = { start: new Date(from), end: new Date(to) };
+
+  const roomFounded = await Room.findOne({ number: room });
+  const { reserves } = roomFounded;
+
+  let errors = [];
+
+  reserves.forEach((reserve) => {
+    let reserveInterval = {
+      start: new Date(reserve.from),
+      end: new Date(reserve.to),
+    };
+    if (areIntervalsOverlapping(reserveInterval, interval))
+      errors.push(
+        `El intervalo ${reserveInterval.start.toLocaleDateString()} a ${reserveInterval.end.toLocaleDateString()} se está superponiendo con la fecha solicitada`
+      );
+  });
+  if (errors.length > 0) throw new Error(errors.join(", "));
+
+  return true;
+};
+
+export const validateCreateProducts = {
   number: body("number")
     .trim()
     .notEmpty()
@@ -97,8 +162,6 @@ const validateCreateProducts = {
     .if(body("hasOwner").notEmpty().isObject())
     .custom(validateEmailOwner),
 
-  isBusy: body("isBusy").if(body("isBusy").notEmpty()).custom(validateDates),
-
   description: body("description")
     .notEmpty()
     .withMessage("La habitacion debe tener una descripcion")
@@ -122,6 +185,33 @@ const validateCreateProducts = {
     .withMessage("images debe tener un formato array")
     .if(body("images").isArray())
     .custom(validateImages),
+
+  reserves: body("reserves")
+    .isArray()
+    .withMessage("Reserves debe ser un array")
+    .custom(validateReserves)
+    .if(body("reserves").custom(validateReserves))
+    .custom(validateIds),
 };
 
-export default validateCreateProducts;
+export const validateReservesProducts = {
+  from: body("from")
+    .notEmpty()
+    .withMessage("Las reservas deben tener una fecha de inicio")
+    .custom(validateDate)
+    .withMessage("La fecha de inicio debe tener un formato de fecha"),
+
+  to: body("to")
+    .notEmpty()
+    .withMessage("Las reservas deben tener una fecha de fin")
+    .custom(validateDate)
+    .withMessage("La fecha final debe tener un formato de fecha"),
+  room: body("room")
+    .notEmpty()
+    .withMessage("Para realizar una reserva se debe especificar la habitación")
+    .isInt({ gt: 0 })
+    .withMessage("Debe tener un formato de número y ser mayor a 0")
+    .if(body("room").isInt({ gt: 0 }))
+    .custom(existsNumberRoomReserve),
+  fromTo: body().custom(verifyReserves),
+};

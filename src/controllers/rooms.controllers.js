@@ -85,10 +85,25 @@ export const editRoom = async (req, res) => {
 };
 
 export const searchRooms = async (req, res) => {
-  const { stars, bedrooms, bathrooms, floor, wifi, airConditioner } = req.query;
+  const {
+    stars,
+    bedrooms,
+    bathrooms,
+    floor,
+    wifi,
+    airConditioner,
+    lowerPrice,
+    highestPrice,
+  } = req.query;
   const payload = {};
   let properties = [];
   let assign = { isVisible: true };
+  if (lowerPrice) {
+    assign.price = { $gte: Number(lowerPrice) };
+  }
+  if (highestPrice) {
+    assign.price = { ...assign.price, $lte: Number(highestPrice) };
+  }
   if (stars) {
     assign.stars = stars;
   }
@@ -144,5 +159,125 @@ export const getByNumber = async (req, res) => {
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json(error.message);
+  }
+};
+
+export const reserve = async (req, res) => {
+  const { userToken } = req;
+  const { from, to, room } = req.body;
+  try {
+    const payload = {
+      userId: userToken.id,
+      from: from,
+      to: to,
+    };
+    await Rooms.findOneAndUpdate(
+      { number: room },
+      { $push: { reserves: payload } }
+    );
+    res.status(200).json("Reservado correctamente");
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const getAllMyRooms = async (req, res) => {
+  try {
+    const { userToken } = req;
+
+    const roomsFounded = await Rooms.find({
+      "reserves.userId": userToken.id,
+    });
+
+    if (!roomsFounded.length)
+      return res
+        .status(404)
+        .json({ message: "No tienes habitaciones reservadas" });
+
+    res.status(200).json(roomsFounded);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const deleteReserve = async (req, res) => {
+  const { from, to, userId, room } = req.body;
+  const payload = {
+    from: from,
+    to: to,
+    userId: userId,
+  };
+  try {
+    const roomFound = await Rooms.findOneAndUpdate(
+      {
+        number: room,
+      },
+      { $pull: { reserves: payload } }
+    );
+    // if (!roomFound) return res.status(404).json("No se encontró la habitacion");
+    res.status(200).json(roomFound);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const getDataToSearcher = async (req, res) => {
+  try {
+    const productHighestPrice = await Rooms.findOne(
+      { isVisible: true },
+      { price: true }
+    ).sort({
+      price: -1,
+    });
+
+    const productLowerPrice = await Rooms.findOne(
+      { isVisible: true },
+      { price: true }
+    ).sort({
+      price: 1,
+    });
+
+    const productsStars = await Rooms.find(
+      { isVisible: true },
+      { stars: true }
+    ).sort({
+      stars: -1,
+    });
+
+    const productsBedrooms = await Rooms.find(
+      { isVisible: true },
+      { "properties.bedrooms": true }
+    ).sort({ "properties.bedrooms": -1 });
+
+    const productsBathrooms = await Rooms.find(
+      { isVisible: true },
+      { "properties.bathrooms": true }
+    ).sort({ "properties.bathrooms": -1 });
+
+    const productsFloor = await Rooms.find(
+      { isVisible: true },
+      { "properties.floor": true }
+    );
+
+    const payload = {
+      price: {
+        highest: productHighestPrice,
+        lower: productLowerPrice,
+      },
+      stars: Array.from(new Set(productsStars.map((p) => p.stars))),
+      bedrooms: Array.from(
+        new Set(productsBedrooms.map((p) => p.properties?.bedrooms))
+      ),
+      bathrooms: Array.from(
+        new Set(productsBathrooms.map((p) => p.properties?.bathrooms))
+      ),
+      floors: Array.from(
+        new Set(productsFloor.map((p) => p.properties?.floor))
+      ),
+    };
+
+    res.status(200).json(payload);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
