@@ -25,16 +25,17 @@ const router = Router();
 router.post(
   "/createRoom",
   validateToken,
-  [validateCreateProducts.stars],
-  [validateCreateProducts.number],
-  [validateCreateProducts.properties],
-  [validateCreateProducts.reserves],
-  [validateCreateProducts.description],
-  [validateCreateProducts.isVisible],
-  [validateCreateProducts.images],
+  validateCreateProducts.stars,
+  validateCreateProducts.number,
+  validateCreateProducts.properties,
+  validateCreateProducts.reserves,
+  validateCreateProducts.description,
+  validateCreateProducts.isVisible,
+  validateCreateProducts.images,
   validateFields,
   createRoom
 );
+
 router.get("/allRooms", validateToken, getAllRooms);
 router.delete("/deleteRoom/:id", validateToken, deleteById);
 router.patch(
