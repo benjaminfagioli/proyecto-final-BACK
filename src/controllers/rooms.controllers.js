@@ -290,3 +290,19 @@ export const getDataToSearcher = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const getImagesFromRooms = async (req, res) => {
+  try {
+    const images = await Rooms.find(
+      { images: { $exists: true } },
+      { images: true, _id: false }
+    ).limit(10);
+    const queryImages = [];
+    if (images.length == 0 || !Array.isArray(images))
+      return res.status(404).json({ message: "No se encontraron imagenes" });
+    images.forEach((imagesArray) => queryImages.push(...imagesArray.images));
+    res.status(200).json(Array.from(new Set(queryImages)));
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
