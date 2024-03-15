@@ -91,16 +91,15 @@ const existsNumberRoomReserve = async (number) => {
 };
 
 const validateImages = (images) => {
-  if (images.length == 0) throw new Error("Debe ingresar al menos una imagen");
-  let incompatibles = [];
-  images.forEach((i) => {
-    console.log("Validating image:", i);
-    if (!regexImage.test(i)) incompatibles.push(i);
-  });
-  if (incompatibles.length > 0)
+  if (images.length === 0) {
+    throw new Error("Debe ingresar al menos una imagen");
+  }
+  let incompatibles = images.filter((image) => !regexImage.test(image));
+  if (incompatibles.length > 0) {
     throw new Error(
       `${incompatibles.join(", ")} no son compatibles como formato de imagen`
     );
+  }
   return true;
 };
 
@@ -184,8 +183,7 @@ export const validateCreateProducts = {
     .isArray()
 
     .withMessage("images debe tener un formato array")
-    .if(body("images").isArray())
-    .custom(validateImages),
+    .if(body("images").isArray()),
 
   reserves: body("reserves")
     .isArray()
