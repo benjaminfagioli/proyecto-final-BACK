@@ -1,6 +1,6 @@
+import { ADMIN_KEY, USER_KEY } from "../config/config.js";
 import { signToken } from "../helpers/singToken.js";
 import User from "../models/user.model.js";
-import { validateToken } from "../validators/validateToken.js";
 
 export const getAllUsers = async (req, res) => {
   try {
@@ -90,10 +90,10 @@ export const login = async (req, res) => {
     const { email } = req.body;
 
     const user = await User.findOne({ email: email });
-
+    const key = user.role === "admin" ? ADMIN_KEY : USER_KEY;
     const token = signToken(user);
 
-    return res.status(200).json({ token: token });
+    return res.status(200).json({ token: token, key: key });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
