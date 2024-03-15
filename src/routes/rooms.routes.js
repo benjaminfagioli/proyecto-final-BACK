@@ -6,6 +6,7 @@ import {
   editRoom,
   getAllMyRooms,
   getAllRooms,
+  getDataToSearcher,
   getById,
   getByNumber,
   reserve,
@@ -61,5 +62,6 @@ router.post(
 );
 router.get("/getallMyRooms", validateUserToken, getAllMyRooms);
 router.patch("/deleteReserve", deleteReserve);
+router.get("/getDataToSearcher", getDataToSearcher);
 
 export default router;
