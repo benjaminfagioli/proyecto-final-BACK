@@ -23,8 +23,8 @@ const newRoom = new Schema(
       type: Boolean,
       default: true,
     },
-
     images: Array,
+    price: Number,
   },
   {
     timestamps: true,

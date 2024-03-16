@@ -191,6 +191,14 @@ export const validateCreateProducts = {
     .custom(validateReserves)
     .if(body("reserves").custom(validateReserves))
     .custom(validateIds),
+  price: body("price")
+    .notEmpty()
+    .withMessage("Debe ingresar un precio")
+    .if(body("price").notEmpty())
+    .isInt({ min: 1, max: 10_000_000 })
+    .withMessage(
+      "El precio debe ser un numero y estar comprendido entre 1 y 10.000.000"
+    ),
 };
 
 export const validateReservesProducts = {

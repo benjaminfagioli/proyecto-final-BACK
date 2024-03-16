@@ -33,6 +33,7 @@ router.post(
   validateCreateProducts.description,
   validateCreateProducts.isVisible,
   validateCreateProducts.images,
+  validateCreateProducts.price,
   validateFields,
   createRoom
 );
