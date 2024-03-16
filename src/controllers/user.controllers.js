@@ -52,20 +52,17 @@ export const deleteUserById = async (req, res) => {
   }
 };
 
-export const editUser = async (req, res) => {
-  const { id } = req.params;
-  const body = req.body;
+export const editUserStatus = async (req, res) => {
+  const { userId, isActive } = req.body;
   try {
-    let user = await User.findById(id);
-    if (!user)
+    let user = await User.findById(userId);
+    if (!user) {
       return res.status(404).json({ message: "Usuario no encontrado" });
-    await User.findByIdAndUpdate(id, body);
-    for (const key in body) {
-      const element = body[key];
-      user[key] = element;
     }
+    user.isActive = isActive;
+    await user.save();
     return res.status(200).json({
-      message: "Usuario editado correctamente",
+      message: "Estado de usuario actualizado correctamente",
       user: user,
     });
   } catch (error) {
@@ -91,6 +88,7 @@ export const login = async (req, res) => {
 
     const user = await User.findOne({ email: email });
     const key = user.role === "admin" ? ADMIN_KEY : USER_KEY;
+    console.log(user.role, key);
     const token = signToken(user);
 
     return res.status(200).json({ token: token, key: key });

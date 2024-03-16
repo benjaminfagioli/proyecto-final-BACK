@@ -3,7 +3,7 @@ import {
   getAllUsers,
   createUser,
   deleteUserById,
-  editUser,
+  editUserStatus,
   searchUsers,
   login,
   getProfileWithToken,
@@ -30,7 +30,7 @@ router.post(
   createUser
 );
 router.delete("/deleteUser/:id", validateToken, deleteUserById);
-router.patch("/editUser/:id", editUser);
+router.patch("/editUserStatus", validateToken, editUserStatus);
 router.get("/searchUsers", searchUsers);
 router.post(
   "/login",
