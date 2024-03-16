@@ -2,17 +2,28 @@ import { Schema, model } from "mongoose";
 
 const newRoom = new Schema(
   {
-    number: Number,
+    number: {
+      type: Number,
+      required: true,
+    },
 
     stars: {
+      required: true,
       type: Number,
       min: 1,
       max: 3,
     },
 
-    description: String,
+    description: {
+      type: String,
+      minlength: 8,
+      required: true,
+    },
 
-    properties: Object,
+    properties: {
+      type: Object,
+      required: true,
+    },
 
     reserves: {
       type: Array,
@@ -23,8 +34,14 @@ const newRoom = new Schema(
       type: Boolean,
       default: true,
     },
-    images: Array,
-    price: Number,
+    images: {
+      type: Array,
+      required: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
   },
   {
     timestamps: true,
