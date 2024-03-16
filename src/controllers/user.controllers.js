@@ -58,6 +58,7 @@ export const editUserStatus = async (req, res) => {
   try {
     let user = await User.findById(userId);
     if (!user) {
+      console.log("Usuario no encontrado");
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
     user.isActive = isActive;
@@ -67,6 +68,7 @@ export const editUserStatus = async (req, res) => {
       user: user,
     });
   } catch (error) {
+    console.error("Error al editar estado de usuario:", error);
     res.status(500).json({ message: error.message });
   }
 };
