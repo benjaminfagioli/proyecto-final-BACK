@@ -53,7 +53,8 @@ export const deleteUserById = async (req, res) => {
 };
 
 export const editUserStatus = async (req, res) => {
-  const { userId, isActive } = req.body;
+  const { userId } = req.params;
+  const { isActive } = req.body;
   try {
     let user = await User.findById(userId);
     if (!user) {

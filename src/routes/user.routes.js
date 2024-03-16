@@ -30,7 +30,7 @@ router.post(
   createUser
 );
 router.delete("/deleteUser/:id", validateToken, deleteUserById);
-router.patch("/editUserStatus", validateToken, editUserStatus);
+router.patch("/editUserStatus/:userId", validateToken, editUserStatus);
 router.get("/searchUsers", searchUsers);
 router.post(
   "/login",
