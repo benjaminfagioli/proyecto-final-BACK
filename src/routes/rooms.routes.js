@@ -11,6 +11,7 @@ import {
   getByNumber,
   reserve,
   searchRooms,
+  getImagesFromRooms,
 } from "../controllers/rooms.controllers.js";
 import { validateToken } from "../validators/validateToken.js";
 import {
@@ -32,6 +33,7 @@ router.post(
   validateCreateProducts.description,
   validateCreateProducts.isVisible,
   validateCreateProducts.images,
+  validateCreateProducts.price,
   validateFields,
   createRoom
 );
@@ -63,5 +65,6 @@ router.post(
 router.get("/getallMyRooms", validateUserToken, getAllMyRooms);
 router.patch("/deleteReserve", deleteReserve);
 router.get("/getDataToSearcher", getDataToSearcher);
+router.get("/getImagesFromRooms", getImagesFromRooms);
 
 export default router;
