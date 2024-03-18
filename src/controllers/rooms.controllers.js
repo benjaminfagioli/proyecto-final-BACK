@@ -223,7 +223,6 @@ export const deleteReserve = async (req, res) => {
       },
       { $pull: { reserves: payload } }
     );
-    // if (!roomFound) return res.status(404).json("No se encontró la habitacion");
     res.status(200).json(roomFound);
   } catch (error) {
     res.status(500).json({ message: error.message });
