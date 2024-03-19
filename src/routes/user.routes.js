@@ -7,6 +7,7 @@ import {
   searchUsers,
   login,
   getProfileWithToken,
+  getUserById,
 } from "../controllers/user.controllers.js";
 import {
   validateCreateUser,
@@ -41,5 +42,6 @@ router.post(
   login
 );
 router.get("/profile", validateUserToken, getProfileWithToken);
+router.get("/user/:id", validateToken, getUserById);
 
 export default router;

@@ -176,11 +176,13 @@ export const getByNumber = async (req, res) => {
 export const reserve = async (req, res) => {
   const { userToken } = req;
   const { from, to, room } = req.body;
+  console.log(userToken);
   try {
     const payload = {
       userId: userToken.id,
       from: from,
       to: to,
+      email: userToken.email,
     };
     await Rooms.findOneAndUpdate(
       { number: room },
