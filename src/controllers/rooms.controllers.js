@@ -53,6 +53,7 @@ export const createRoom = async (req, res) => {
     isVisible,
     images,
     properties,
+    price,
   } = req.body;
 
   try {
@@ -65,6 +66,7 @@ export const createRoom = async (req, res) => {
       isVisible: isVisible,
       images: images,
       properties: properties,
+      price: price,
     });
     res.status(201).json({ message: newRoom._id });
   } catch (error) {

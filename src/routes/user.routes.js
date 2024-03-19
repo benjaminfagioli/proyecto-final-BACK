@@ -18,7 +18,7 @@ import { validateUserToken } from "../validators/validateUserToken.js";
 
 const router = Router();
 
-router.get("/allUsers", getAllUsers);
+router.get("/allUsers", validateToken, getAllUsers);
 router.post(
   "/createUser",
   [
