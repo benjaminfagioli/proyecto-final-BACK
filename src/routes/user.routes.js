@@ -7,6 +7,7 @@ import {
   searchUsers,
   login,
   getProfileWithToken,
+  getUserById,
 } from "../controllers/user.controllers.js";
 import {
   validateCreateUser,
@@ -18,7 +19,7 @@ import { validateUserToken } from "../validators/validateUserToken.js";
 
 const router = Router();
 
-router.get("/allUsers", getAllUsers);
+router.get("/allUsers", validateToken, getAllUsers);
 router.post(
   "/createUser",
   [
@@ -43,5 +44,6 @@ router.post(
 );
 
 router.get("/profile", validateUserToken, getProfileWithToken);
+router.get("/user/:id", validateToken, getUserById);
 
 export default router;
