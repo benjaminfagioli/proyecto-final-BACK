@@ -108,3 +108,18 @@ export const getProfileWithToken = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const getUserById = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const userFound = await User.findById(id, {
+      password: 0,
+      createdAt: 0,
+      updatedAt: 0,
+      __v: 0,
+    });
+    res.status(200).json(userFound);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

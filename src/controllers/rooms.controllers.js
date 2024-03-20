@@ -53,6 +53,7 @@ export const createRoom = async (req, res) => {
     isVisible,
     images,
     properties,
+    price,
   } = req.body;
 
   try {
@@ -65,6 +66,7 @@ export const createRoom = async (req, res) => {
       isVisible: isVisible,
       images: images,
       properties: properties,
+      price: price,
     });
     res.status(201).json({ message: newRoom._id });
   } catch (error) {
@@ -174,11 +176,13 @@ export const getByNumber = async (req, res) => {
 export const reserve = async (req, res) => {
   const { userToken } = req;
   const { from, to, room } = req.body;
+  console.log(userToken);
   try {
     const payload = {
       userId: userToken.id,
       from: from,
       to: to,
+      email: userToken.email,
     };
     await Rooms.findOneAndUpdate(
       { number: room },
