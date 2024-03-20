@@ -29,6 +29,7 @@ router.post(
   validateFields,
   createUser
 );
+
 router.delete("/deleteUser/:id", validateToken, deleteUserById);
 router.patch("/editUserStatus/:userId", validateToken, editUserStatus);
 router.get("/searchUsers", searchUsers);
@@ -40,6 +41,7 @@ router.post(
   validateFields,
   login
 );
+
 router.get("/profile", validateUserToken, getProfileWithToken);
 
 export default router;
