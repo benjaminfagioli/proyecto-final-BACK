@@ -315,7 +315,11 @@ export const deleteManyReserves = async (req, res) => {
   try {
     const reserves = await Rooms.updateMany(
       { "reserves.userId": id },
-      { $unset: { reserves: { "reserves.userId": id } } }
+      {
+        $pull: {
+          reserves: { userId: id },
+        },
+      }
     );
     res.status(200).json(reserves);
   } catch (error) {}
