@@ -1,4 +1,4 @@
-import { body } from "express-validator";
+import { body, param } from "express-validator";
 import Room from "../models/room.model.js";
 import User from "../models/user.model.js";
 import regexImage from "../helpers/regexImage.js";
@@ -131,6 +131,12 @@ const verifyReserves = async (body) => {
   return true;
 };
 
+const verifyHaveReserves = async (id) => {
+  const reserves = await Room.findOne({ "reserves.userId": id });
+  console.log(reserves);
+  if (!reserves) throw new Error("No se encontraron reservas");
+};
+
 export const validateCreateProducts = {
   number: body("number")
     .trim()
@@ -221,4 +227,8 @@ export const validateReservesProducts = {
     .if(body("room").isInt({ gt: 0 }))
     .custom(existsNumberRoomReserve),
   fromTo: body().custom(verifyReserves),
+};
+
+export const validateDeleteReserve = {
+  id: param("id").custom(verifyHaveReserves),
 };
