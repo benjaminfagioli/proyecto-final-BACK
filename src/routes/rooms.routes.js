@@ -12,6 +12,7 @@ import {
   reserve,
   searchRooms,
   getImagesFromRooms,
+  deleteManyReserves,
 } from "../controllers/rooms.controllers.js";
 import { validateToken } from "../validators/validateToken.js";
 import {
@@ -66,5 +67,6 @@ router.get("/getallMyRooms", validateUserToken, getAllMyRooms);
 router.patch("/deleteReserve", deleteReserve);
 router.get("/getDataToSearcher", getDataToSearcher);
 router.get("/getImagesFromRooms", getImagesFromRooms);
+router.patch("/deleteManyReserves/:id", deleteManyReserves);
 
 export default router;
