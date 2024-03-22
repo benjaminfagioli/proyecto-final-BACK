@@ -309,3 +309,18 @@ export const getImagesFromRooms = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const deleteManyReserves = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const reserves = await Rooms.updateMany(
+      { "reserves.userId": id },
+      {
+        $pull: {
+          reserves: { userId: id },
+        },
+      }
+    );
+    res.status(200).json(reserves);
+  } catch (error) {}
+};

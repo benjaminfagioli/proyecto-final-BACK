@@ -12,10 +12,12 @@ import {
   reserve,
   searchRooms,
   getImagesFromRooms,
+  deleteManyReserves,
 } from "../controllers/rooms.controllers.js";
 import { validateToken } from "../validators/validateToken.js";
 import {
   validateCreateProducts,
+  validateDeleteReserve,
   validateReservesProducts,
 } from "../validators/productsValidations.js";
 import { validateFields } from "../validators/validateFields.js";
@@ -66,5 +68,12 @@ router.get("/getallMyRooms", validateUserToken, getAllMyRooms);
 router.patch("/deleteReserve", deleteReserve);
 router.get("/getDataToSearcher", getDataToSearcher);
 router.get("/getImagesFromRooms", getImagesFromRooms);
+router.patch(
+  "/deleteManyReserves/:id",
+  validateToken,
+  [validateDeleteReserve.id],
+  validateFields,
+  deleteManyReserves
+);
 
 export default router;

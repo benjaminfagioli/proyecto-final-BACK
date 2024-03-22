@@ -15,7 +15,14 @@ const existsEmailLogin = async (email) => {
   if (!userFound) throw new Error(`No existe un usuario con el email ${email}`);
   return false;
 };
-
+const isActiveEmail = async (email) => {
+  const userFound = await User.findOne({ email: email });
+  if (!userFound.isActive)
+    throw new Error(
+      `Tu cuenta se encuentra temporalmente desactivada, contactanos para mas información`
+    );
+  return false;
+};
 const checkPassword = async ({ email, password }) => {
   console.log(email, password);
   const userFound = await User.findOne({ email: email });
@@ -49,7 +56,9 @@ export const validateLoginUser = {
     .isEmail()
     .withMessage("Debe tener un formato de email")
     .if(body("email").isEmail())
-    .custom(existsEmailLogin),
+    .custom(existsEmailLogin)
+    .if(body("email").isEmail().custom(existsEmailLogin))
+    .custom(isActiveEmail),
   password: body("password")
     .notEmpty()
     .withMessage("Debe ingresar una contraseña")
