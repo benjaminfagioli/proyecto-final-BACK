@@ -1,6 +1,6 @@
+import { ADMIN_KEY, USER_KEY } from "../config/config.js";
 import { signToken } from "../helpers/singToken.js";
 import User from "../models/user.model.js";
-import { validateToken } from "../validators/validateToken.js";
 
 export const getAllUsers = async (req, res) => {
   try {
@@ -52,23 +52,23 @@ export const deleteUserById = async (req, res) => {
   }
 };
 
-export const editUser = async (req, res) => {
-  const { id } = req.params;
-  const body = req.body;
+export const editUserStatus = async (req, res) => {
+  const { userId } = req.params;
+  const { isActive } = req.body;
   try {
-    let user = await User.findById(id);
-    if (!user)
+    let user = await User.findById(userId);
+    if (!user) {
+      console.log("Usuario no encontrado");
       return res.status(404).json({ message: "Usuario no encontrado" });
-    await User.findByIdAndUpdate(id, body);
-    for (const key in body) {
-      const element = body[key];
-      user[key] = element;
     }
+    user.isActive = isActive;
+    await user.save();
     return res.status(200).json({
-      message: "Usuario editado correctamente",
+      message: "Estado de usuario actualizado correctamente",
       user: user,
     });
   } catch (error) {
+    console.error("Error al editar estado de usuario:", error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -90,10 +90,11 @@ export const login = async (req, res) => {
     const { email } = req.body;
 
     const user = await User.findOne({ email: email });
-
+    const key = user.role === "admin" ? ADMIN_KEY : USER_KEY;
+    console.log(user.role, key);
     const token = signToken(user);
 
-    return res.status(200).json({ token: token });
+    return res.status(200).json({ token: token, key: key });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -103,6 +104,21 @@ export const getProfileWithToken = async (req, res) => {
   try {
     const { userToken } = req;
     res.status(200).json(userToken);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const getUserById = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const userFound = await User.findById(id, {
+      password: 0,
+      createdAt: 0,
+      updatedAt: 0,
+      __v: 0,
+    });
+    res.status(200).json(userFound);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

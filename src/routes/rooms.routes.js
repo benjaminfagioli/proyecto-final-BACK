@@ -11,10 +11,13 @@ import {
   getByNumber,
   reserve,
   searchRooms,
+  getImagesFromRooms,
+  deleteManyReserves,
 } from "../controllers/rooms.controllers.js";
 import { validateToken } from "../validators/validateToken.js";
 import {
   validateCreateProducts,
+  validateDeleteReserve,
   validateReservesProducts,
 } from "../validators/productsValidations.js";
 import { validateFields } from "../validators/validateFields.js";
@@ -25,16 +28,18 @@ const router = Router();
 router.post(
   "/createRoom",
   validateToken,
-  [validateCreateProducts.stars],
-  [validateCreateProducts.number],
-  [validateCreateProducts.properties],
-  [validateCreateProducts.reserves],
-  [validateCreateProducts.description],
-  [validateCreateProducts.isVisible],
-  [validateCreateProducts.images],
+  validateCreateProducts.stars,
+  validateCreateProducts.number,
+  validateCreateProducts.properties,
+  validateCreateProducts.reserves,
+  validateCreateProducts.description,
+  validateCreateProducts.isVisible,
+  validateCreateProducts.images,
+  validateCreateProducts.price,
   validateFields,
   createRoom
 );
+
 router.get("/allRooms", validateToken, getAllRooms);
 router.delete("/deleteRoom/:id", validateToken, deleteById);
 router.patch(
@@ -62,5 +67,13 @@ router.post(
 router.get("/getallMyRooms", validateUserToken, getAllMyRooms);
 router.patch("/deleteReserve", deleteReserve);
 router.get("/getDataToSearcher", getDataToSearcher);
+router.get("/getImagesFromRooms", getImagesFromRooms);
+router.patch(
+  "/deleteManyReserves/:id",
+  validateToken,
+  [validateDeleteReserve.id],
+  validateFields,
+  deleteManyReserves
+);
 
 export default router;

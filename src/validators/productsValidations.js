@@ -1,4 +1,4 @@
-import { body } from "express-validator";
+import { body, param } from "express-validator";
 import Room from "../models/room.model.js";
 import User from "../models/user.model.js";
 import regexImage from "../helpers/regexImage.js";
@@ -91,15 +91,15 @@ const existsNumberRoomReserve = async (number) => {
 };
 
 const validateImages = (images) => {
-  if (images.length == 0) throw new Error("Debe ingresar al menos una imagen");
-  let incompatibles = [];
-  images.forEach((i) => {
-    if (!regexImage.test(i)) incompatibles.push(i);
-  });
-  if (incompatibles.length > 0)
+  if (images.length === 0) {
+    throw new Error("Debe ingresar al menos una imagen");
+  }
+  let incompatibles = images.filter((image) => !regexImage.test(image));
+  if (incompatibles.length > 0) {
     throw new Error(
       `${incompatibles.join(", ")} no son compatibles como formato de imagen`
     );
+  }
   return true;
 };
 
@@ -129,6 +129,12 @@ const verifyReserves = async (body) => {
   if (errors.length > 0) throw new Error(errors.join(", "));
 
   return true;
+};
+
+const verifyHaveReserves = async (id) => {
+  const reserves = await Room.findOne({ "reserves.userId": id });
+  console.log(reserves);
+  if (!reserves) throw new Error("No se encontraron reservas");
 };
 
 export const validateCreateProducts = {
@@ -183,8 +189,7 @@ export const validateCreateProducts = {
     .isArray()
 
     .withMessage("images debe tener un formato array")
-    .if(body("images").isArray())
-    .custom(validateImages),
+    .if(body("images").isArray()),
 
   reserves: body("reserves")
     .isArray()
@@ -192,6 +197,14 @@ export const validateCreateProducts = {
     .custom(validateReserves)
     .if(body("reserves").custom(validateReserves))
     .custom(validateIds),
+  price: body("price")
+    .notEmpty()
+    .withMessage("Debe ingresar un precio")
+    .if(body("price").notEmpty())
+    .isInt({ min: 1, max: 10_000_000 })
+    .withMessage(
+      "El precio debe ser un numero y estar comprendido entre 1 y 10.000.000"
+    ),
 };
 
 export const validateReservesProducts = {
@@ -214,4 +227,8 @@ export const validateReservesProducts = {
     .if(body("room").isInt({ gt: 0 }))
     .custom(existsNumberRoomReserve),
   fromTo: body().custom(verifyReserves),
+};
+
+export const validateDeleteReserve = {
+  id: param("id").custom(verifyHaveReserves),
 };

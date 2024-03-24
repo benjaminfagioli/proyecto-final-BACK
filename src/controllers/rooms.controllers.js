@@ -44,8 +44,17 @@ export const deleteById = async (req, res) => {
 };
 
 export const createRoom = async (req, res) => {
-  const { number, stars, isBusy, description, userId, isVisible, images } =
-    req.body;
+  const {
+    number,
+    stars,
+    isBusy,
+    description,
+    userId,
+    isVisible,
+    images,
+    properties,
+    price,
+  } = req.body;
 
   try {
     const newRoom = await Rooms.create({
@@ -56,13 +65,15 @@ export const createRoom = async (req, res) => {
       userId: userId,
       isVisible: isVisible,
       images: images,
+      properties: properties,
+      price: price,
     });
     res.status(201).json({ message: newRoom._id });
   } catch (error) {
+    console.error("Room Creation Error:", error);
     return res.status(500).json({ message: error.message });
   }
 };
-
 export const editRoom = async (req, res) => {
   const { id } = req.params;
   const body = req.body;
@@ -165,11 +176,13 @@ export const getByNumber = async (req, res) => {
 export const reserve = async (req, res) => {
   const { userToken } = req;
   const { from, to, room } = req.body;
+  console.log(userToken);
   try {
     const payload = {
       userId: userToken.id,
       from: from,
       to: to,
+      email: userToken.email,
     };
     await Rooms.findOneAndUpdate(
       { number: room },
@@ -214,7 +227,6 @@ export const deleteReserve = async (req, res) => {
       },
       { $pull: { reserves: payload } }
     );
-    // if (!roomFound) return res.status(404).json("No se encontró la habitacion");
     res.status(200).json(roomFound);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -280,4 +292,35 @@ export const getDataToSearcher = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+};
+
+export const getImagesFromRooms = async (req, res) => {
+  try {
+    const images = await Rooms.find(
+      { images: { $exists: true } },
+      { images: true, _id: false }
+    ).limit(10);
+    const queryImages = [];
+    if (images.length == 0 || !Array.isArray(images))
+      return res.status(404).json({ message: "No se encontraron imagenes" });
+    images.forEach((imagesArray) => queryImages.push(...imagesArray.images));
+    res.status(200).json(Array.from(new Set(queryImages)));
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const deleteManyReserves = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const reserves = await Rooms.updateMany(
+      { "reserves.userId": id },
+      {
+        $pull: {
+          reserves: { userId: id },
+        },
+      }
+    );
+    res.status(200).json(reserves);
+  } catch (error) {}
 };

@@ -3,10 +3,11 @@ import {
   getAllUsers,
   createUser,
   deleteUserById,
-  editUser,
+  editUserStatus,
   searchUsers,
   login,
   getProfileWithToken,
+  getUserById,
 } from "../controllers/user.controllers.js";
 import {
   validateCreateUser,
@@ -18,7 +19,7 @@ import { validateUserToken } from "../validators/validateUserToken.js";
 
 const router = Router();
 
-router.get("/allUsers", getAllUsers);
+router.get("/allUsers", validateToken, getAllUsers);
 router.post(
   "/createUser",
   [
@@ -29,8 +30,9 @@ router.post(
   validateFields,
   createUser
 );
+
 router.delete("/deleteUser/:id", validateToken, deleteUserById);
-router.patch("/editUser/:id", editUser);
+router.patch("/editUserStatus/:userId", validateToken, editUserStatus);
 router.get("/searchUsers", searchUsers);
 router.post(
   "/login",
@@ -40,6 +42,8 @@ router.post(
   validateFields,
   login
 );
+
 router.get("/profile", validateUserToken, getProfileWithToken);
+router.get("/user/:id", validateToken, getUserById);
 
 export default router;
