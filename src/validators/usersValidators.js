@@ -24,7 +24,6 @@ const isActiveEmail = async (email) => {
   return false;
 };
 const checkPassword = async ({ email, password }) => {
-  console.log(email, password);
   const userFound = await User.findOne({ email: email });
   if (!userFound) return;
   const hashPassword = await comparePasswords(password, userFound.password);

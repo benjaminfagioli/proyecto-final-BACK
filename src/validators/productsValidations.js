@@ -71,7 +71,6 @@ const validateIds = async (reserves) => {
   });
   // 65ebc5aa61eb8126f5717f79
   // 65e61bdfac2944ca4c8a8cdb
-  console.log(usersFound);
   if (usersFound.length < ids.length)
     throw new Error(
       "El id de uno o mas usuarios no se encuentran registrados en nuestra base de datos  "
@@ -133,7 +132,6 @@ const verifyReserves = async (body) => {
 
 const verifyHaveReserves = async (id) => {
   const reserves = await Room.findOne({ "reserves.userId": id });
-  console.log(reserves);
   if (!reserves) throw new Error("No se encontraron reservas");
 };
 

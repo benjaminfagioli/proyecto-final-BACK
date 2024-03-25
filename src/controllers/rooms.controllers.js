@@ -148,7 +148,6 @@ export const searchRooms = async (req, res) => {
     }
     delete payload.properties;
     properties.forEach((p) => Object.assign(assign, p));
-    console.log(assign);
 
     const results = await Rooms.find(assign);
     if (!results.length)
@@ -176,7 +175,6 @@ export const getByNumber = async (req, res) => {
 export const reserve = async (req, res) => {
   const { userToken } = req;
   const { from, to, room } = req.body;
-  console.log(userToken);
   try {
     const payload = {
       userId: userToken.id,
