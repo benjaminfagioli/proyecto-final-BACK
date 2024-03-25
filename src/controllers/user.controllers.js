@@ -58,7 +58,6 @@ export const editUserStatus = async (req, res) => {
   try {
     let user = await User.findById(userId);
     if (!user) {
-      console.log("Usuario no encontrado");
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
     user.isActive = isActive;
@@ -91,7 +90,6 @@ export const login = async (req, res) => {
 
     const user = await User.findOne({ email: email });
     const key = user.role === "admin" ? ADMIN_KEY : USER_KEY;
-    console.log(user.role, key);
     const token = signToken(user);
 
     return res.status(200).json({ token: token, key: key });
