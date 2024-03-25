@@ -194,9 +194,9 @@ export const validateCreateProducts = {
   reserves: body("reserves")
     .isArray()
     .withMessage("Reserves debe ser un array")
-    .custom(validateReserves)
-    .if(body("reserves").custom(validateReserves))
-    .custom(validateIds),
+    .custom(validateReserves),
+  // .if(body("reserves").custom(validateReserves))
+  // .custom(validateIds),
   price: body("price")
     .notEmpty()
     .withMessage("Debe ingresar un precio")
