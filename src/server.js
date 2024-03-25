@@ -5,6 +5,8 @@ import { PORT } from "./config/config.js";
 import roomsRoutes from "./routes/rooms.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import "./db.js";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const app = express();
 
@@ -22,3 +24,7 @@ app.use("/users", userRoutes);
 app.listen(PORT, () => {
   console.log(`La app está escuchando el puerto: ${PORT}`);
 });
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use(express.static(path.join(__dirname, "../public")));
