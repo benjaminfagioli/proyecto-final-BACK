@@ -65,7 +65,7 @@ router.post(
   reserve
 );
 router.get("/getallMyRooms", validateUserToken, getAllMyRooms);
-router.patch("/deleteReserve", deleteReserve);
+router.patch("/deleteReserve", validateToken, deleteReserve);
 router.get("/getDataToSearcher", getDataToSearcher);
 router.get("/getImagesFromRooms", getImagesFromRooms);
 router.patch(
