@@ -312,15 +312,17 @@ export const getImagesFromRooms = async (req, res) => {
 
 export const deleteManyReserves = async (req, res) => {
   const { id } = req.params;
+
   try {
     const reserves = await Rooms.updateMany(
       { "reserves.userId": id },
-      {
-        $pull: {
-          reserves: { userId: id },
-        },
-      }
+      { $pull: { reserves: { userId: id } } }
     );
+
+    console.log("Reservas eliminadas:", reserves);
     res.status(200).json(reserves);
-  } catch (error) {}
+  } catch (error) {
+    console.error("Error al eliminar reservas:", error);
+    res.status(500).json({ error: "Error al eliminar reservas." });
+  }
 };
